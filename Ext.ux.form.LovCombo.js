@@ -134,6 +134,13 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
     // }}}
     // {{{
     /**
+     * Prevent superclass beforeBlur
+     * @private
+     */
+    // }}}
+    ,beforeBlur:Ext.emptyFn
+    // {{{
+    /**
      * Clears value
      */
     ,clearValue:function() {
