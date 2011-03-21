@@ -13,7 +13,7 @@
  * <li>16. April 2008</li>
  * <li>2. February 2009</li>
  * </ul>
-* @revision $Id: Ext.ux.form.LovCombo.js 618 2009-03-08 23:47:48Z jozo $ 
+ * @revision  $Id: Ext.ux.form.LovCombo.js 733 2009-06-26 07:29:07Z jozo $
  *
  * @license Ext.ux.form.LovCombo.js is licensed under the terms of the Open Source
  * LGPL 3.0 license. Commercial use is permitted to the extent that the
@@ -99,7 +99,7 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
                 +'<img src="' + Ext.BLANK_IMAGE_URL + '" '
                 +'class="ux-lovcombo-icon ux-lovcombo-icon-'
                 +'{[values.' + this.checkField + '?"checked":"unchecked"' + ']}">'
-                + '<div class="ux-lovcombo-item-text">{' + (this.displayField || 'text') + '}</div>'
+                +'<div class="ux-lovcombo-item-text">{' + (this.displayField || 'text' )+ ':htmlEncode}</div>'
                 +'</div>'
                 +'</tpl>'
             ;
@@ -240,7 +240,8 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
     // }}}
     // {{{
     /**
-     * Sets the value of the LovCombo 
+     * Sets the value of the LovCombo. The passed value can by a falsie (null, false, empty string), in
+     * which case the combo value is cleared or separator separated string of values, e.g. '3,5,6'.
      * @param {Mixed} v value
      */
     ,setValue:function(v) {
