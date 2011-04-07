@@ -151,7 +151,10 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
             r.set(this.checkField, false);
         }, this);
         if(this.hiddenField) {
-            this.hiddenField.value = '';
+            this.hiddenField.value = this.valueAsJsonArray === true ? '[]' : '';
+        }
+        if(this.rendered){
+            this.validate();
         }
         this.applyEmptyText();
     } // eo function clearValue
@@ -267,15 +270,18 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
                 this.value = this.getCheckedValue();
                 this.setRawValue(this.getCheckedDisplay());
                 if(this.hiddenField) {
-                    this.hiddenField.value = this.value;
+                    this.hiddenField.value = this.valueAsJsonArray === true ? '[' + this.value + ']' : this.value;
                 }
             }
             else {
                 this.value = v;
                 this.setRawValue(v);
                 if(this.hiddenField) {
-                    this.hiddenField.value = v;
+                    this.hiddenField.value = this.valueAsJsonArray === true ? '[' + v + ']' : v;
                 }
+            }
+            if(this.rendered){
+                this.validate();
             }
             if(this.el) {
                 this.el.removeClass(this.emptyClass);
