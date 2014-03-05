@@ -75,6 +75,12 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
      * @cfg {String/Array} tpl Template for items.
      * Change it only if you know what you are doing.
      */
+
+    /**
+    * @cfg {Boolean} valueAsJsonArray true to store the field's value as a json Array.
+    * Only applies when valueField is present.
+    * The json value is accessible by calling getValue.
+    */
     // }}}
     // {{{
     ,constructor:function(config) {
@@ -144,14 +150,14 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
      * Clears value
      */
     ,clearValue:function() {
-        this.value = '';
-        this.setRawValue(this.value);
+        this.value = this.valueAsJsonArray === true ? Ext.encode([]) : '';
+        this.setRawValue('');
         this.store.clearFilter();
         this.store.each(function(r) {
             r.set(this.checkField, false);
         }, this);
         if(this.hiddenField) {
-            this.hiddenField.value = this.valueAsJsonArray === true ? '[]' : '';
+            this.hiddenField.value = this.value;
         }
         if(this.rendered){
             this.validate();
@@ -171,10 +177,10 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
     // }}}
     // {{{
     /**
-     * @return {String} separator separated list of selected valueFields
+     * @return {Array} array of selected valueFields
      * @private
      */
-    ,getCheckedValue:function(field) {
+    ,getCheckedValues:function(field) {
         field = field || this.valueField;
         var c = [];
 
@@ -187,7 +193,16 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
             }
         }, this);
 
-        return c.join(this.separator);
+        return c;
+    } // eo function getCheckedValues
+    // }}}
+    // {{{
+    /**
+     * @return {String} separator separated list of selected valueFields
+     * @private
+     */
+    ,getCheckedValue:function(field) {
+        return this.getCheckedValues(field).join(this.separator);
     } // eo function getCheckedValue
     // }}}
     // {{{
@@ -206,6 +221,8 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
      * @private
      */
     ,onRealBlur:function() {
+        if (this.readOnly) { return; }  // do not react to blur if readOnly
+
         this.list.hide();
         var rv = this.getRawValue();
         var rva = rv.split(new RegExp(RegExp.escape(this.separator) + ' *'));
@@ -267,17 +284,19 @@ Ext.ux.form.LovCombo = Ext.extend(Ext.form.ComboBox, {
 
                     r.set(this.checkField, checked);
                 }, this);
-                this.value = this.getCheckedValue();
+
+                var values = this.getCheckedValues();
+                this.value = this.valueAsJsonArray === true ? Ext.encode(values) : values.join(this.separator);
                 this.setRawValue(this.getCheckedDisplay());
-                if(this.hiddenField) {
-                    this.hiddenField.value = this.valueAsJsonArray === true ? '[' + this.value + ']' : this.value;
+                if (this.hiddenField) {
+                    this.hiddenField.value = this.value;
                 }
             }
             else {
-                this.value = v;
+                this.value = v; // due to the current architecture, it would be difficult to support valueAsJsonArray here
                 this.setRawValue(v);
                 if(this.hiddenField) {
-                    this.hiddenField.value = this.valueAsJsonArray === true ? '[' + v + ']' : v;
+                    this.hiddenField.value = v;
                 }
             }
             if(this.rendered){
